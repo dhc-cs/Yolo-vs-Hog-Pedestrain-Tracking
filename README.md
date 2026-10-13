@@ -50,9 +50,9 @@ Exit each program using `CTRL + C` . Saving the output video is optional.
 
 HOG uses OpenCV’s pretrained SVM pedestrian detector. YOLO uses the pretrained YOLOv5s ONNX model. I did not train either model.
 
-The YOLO model must be located at `yolo/config/yolov5s.onnx`. The starter code and models came from the [doleron YOLOv5 example](https://github.com/doleron/yolov5-opencv-cpp-python).
+The YOLO model must be located at `yolo/config/yolov5s.onnx`.
 
-Input videos must be supplied separately.
+Input videos must be specified separately.
 
 ## Sources and Acknowledgments
 
@@ -63,3 +63,7 @@ YOLO was adapted from the [doleron YOLOv5 OpenCV example](https://github.com/dol
 Video saving was based on [OpenCV’s video-writing tutorial](https://docs.opencv.org/4.5.4/d7/d9e/tutorial_video_write.html)
 
 The Makefiles were adapted from [Professor Sam Siewert’s starter code](https://github.com/sbsiewertcsu/cv4_computer_vision_starter_code/blob/main/simpler-capture-4/Makefile)
+
+The input video `2012-08-25-RoseBowl.mp4` was shortened to a 10 second clip named `smallRose.mp4`.
+
+The dataset reference is [Pedestrian Detection: A Benchmark](https://ieeexplore.ieee.org/document/5206631) by Piotr Dollár, Christian Wojek, Bernt Schiele, and Pietro Perona.
