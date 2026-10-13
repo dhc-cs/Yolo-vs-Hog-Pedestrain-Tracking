@@ -25,5 +25,5 @@ hog: hog.o
 
 depend:
 
-.cpp.o: $(SRCS)
-	$(CC) $(CFLAGS) -c $<
+hog.o: hog.cpp ../comTracker.hpp
+	$(CC) $(CFLAGS) -c $< -o $@
