@@ -10,6 +10,9 @@
 #include <syslog.h> // for logging to syslog
 using namespace cv;
 using namespace std;
+
+#include "../comTracker.hpp"
+
 class Detector
 {
     enum Mode { Default, Daimler } m;
@@ -102,6 +105,7 @@ int main(int argc, char** argv)
     }
 
     Detector detector;
+    CenterTracker tracker(80.0, 5); // maxDistance = 80.0, maxMissedFrames = 5
     Mat frame;
     unsigned int frameCount = 0; // to keep track of frames 
 
@@ -180,6 +184,7 @@ int main(int argc, char** argv)
 
         unsigned int pedCount = 0; // to keep track of number of peds
 
+        // bounding box loop
         for (vector<Rect>::iterator i = found.begin(); i != found.end(); ++i)
         {
             Rect &r = *i;
@@ -192,10 +197,12 @@ int main(int argc, char** argv)
 
 
             // draw bb if flag is set
-            if (bb) {
-                rectangle(frame, r.tl(), r.br(), cv::Scalar(0, 255, 0), 2);
-            }
+            if (bb) { rectangle(frame, r.tl(), r.br(), cv::Scalar(0, 255, 0), 2);}
         }
+
+        // update tracker for current frame
+        tracker.update(found);
+        tracker.draw(frame);
 
         // write to output video if store flag is set
         if (outputVideo.isOpened()) {
