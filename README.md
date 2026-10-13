@@ -56,10 +56,10 @@ Input videos must be supplied separately.
 
 ## Sources and Acknowledgments
 
-HOG was adapted from [OpenCV’s pedestrian detection sample](https://github.com/opencv/opencv/blob/4.5.4/samples/cpp/peopledetect.cpp).
+HOG was adapted from [OpenCV’s pedestrian detection sample](https://github.com/opencv/opencv/blob/4.5.4/samples/cpp/peopledetect.cpp)
 
-YOLO was adapted from the [doleron YOLOv5 OpenCV example](https://github.com/doleron/yolov5-opencv-cpp-python).
+YOLO was adapted from the [doleron YOLOv5 OpenCV example](https://github.com/doleron/yolov5-opencv-cpp-python)
 
-Video saving was based on [OpenCV’s video-writing tutorial](https://docs.opencv.org/4.5.4/d7/d9e/tutorial_video_write.html).
+Video saving was based on [OpenCV’s video-writing tutorial](https://docs.opencv.org/4.5.4/d7/d9e/tutorial_video_write.html)
 
-The Makefiles were adapted from [Professor Sam Siewert’s starter code](https://github.com/sbsiewertcsu/cv4_computer_vision_starter_code/blob/main/simpler-capture-4/Makefile). 
+The Makefiles were adapted from [Professor Sam Siewert’s starter code](https://github.com/sbsiewertcsu/cv4_computer_vision_starter_code/blob/main/simpler-capture-4/Makefile)
