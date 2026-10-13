@@ -24,5 +24,5 @@ yolo: yolo.o
 
 depend:
 
-yolo.o: $(SRCS)
+yolo.o: yolo.cpp ../comTracker.hpp
 	$(CC) $(CFLAGS) -c $< -o $@

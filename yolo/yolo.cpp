@@ -3,9 +3,12 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "../comTracker.hpp"
+
 using namespace cv;
 using namespace std;
 using namespace cv::dnn;
+
 
 static const string keys =
     "{ video v | | use video as input }"
@@ -55,6 +58,7 @@ int main(int argc, char **argv) {
     const float nms_threshold = 0.40f;
 
     Mat frame;
+    CenterTracker tracker(80.0, 5); // maxDistance = 80.0, maxMissedFrames = 5
 
     while (capture.read(frame)) {
         int side = max(frame.cols, frame.rows);
@@ -120,13 +124,20 @@ int main(int argc, char **argv) {
             indices);
 
         //draw boxes
-        for (int index : indices) {
-            rectangle(
-                frame,
-                boxes[index],
-                Scalar(0, 255, 0),
-                2);
+        vector<Rect> finalBoxes;
+
+        for (int idx : indices) {
+            const Rect& box = boxes[idx];
+            if (box.width <= 0 || box.height <= 0)
+                continue;
+            
+            finalBoxes.push_back(box);
+            rectangle(frame, box, Scalar(0, 255, 0), 2);
         }
+
+        //update tracker
+        tracker.update(finalBoxes);
+        tracker.draw(frame); // draw trajectories and IDs
 
         imshow("YOLO Pedestrian Detection", frame);
 

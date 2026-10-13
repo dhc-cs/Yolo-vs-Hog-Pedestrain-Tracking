@@ -118,11 +118,11 @@ public:
         Scalar color(255, 165, 0);
 
         for (size_t i = 0; i < multipleRecords.size(); i++) {
-            TrackingRecord& currentTrackingRecord = multipleRecords[i];
+            const TrackingRecord& currentTrackingRecord = multipleRecords[i];
             if (currentTrackingRecord.consecutiveMisses != 0)
                 continue;
 
-            // Connect successive centers.
+            // Connect successive centers
             for (size_t i = 1; i < currentTrackingRecord.centerHistory.size(); ++i) {
                 line(frame,
                          currentTrackingRecord.centerHistory[i - 1],
