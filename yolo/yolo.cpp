@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "../comTracker.hpp"
+#include <fstream>
 
 using namespace cv;
 using namespace std;
