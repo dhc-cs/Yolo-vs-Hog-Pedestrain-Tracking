@@ -60,6 +60,7 @@ int main(int argc, char **argv) {
     Mat frame;
     CenterTracker tracker(80.0, 5); // maxDistance = 80.0, maxMissedFrames = 5
 
+    // Video Loop 
     while (capture.read(frame)) {
         int side = max(frame.cols, frame.rows);
 
