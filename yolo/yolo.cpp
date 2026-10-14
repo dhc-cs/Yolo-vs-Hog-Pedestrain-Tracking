@@ -12,7 +12,8 @@ using namespace cv::dnn;
 
 static const string keys =
     "{ video v | | use video as input }"
-    "{ store   | | store the output video }";
+    "{ store   | | store the output video }"
+    "{ log     | | save detections to a csv file }"; 
 
 int main(int argc, char **argv) {
     CommandLineParser parser(argc, argv, keys);
@@ -59,6 +60,20 @@ int main(int argc, char **argv) {
 
     Mat frame;
     CenterTracker tracker(80.0, 5); // maxDistance = 80.0, maxMissedFrames = 5
+
+    // open csv file for logging detections 
+    string filename = parser.get<string>("log"); // read the file named passed in the CL
+    ofstream logFile; // output file stream object to write to a file 
+
+    if(!filename.empty()) { // only log when file name is provided (litle sanity check)
+        // create/open file for writing 
+        logFile.open(filename); 
+
+        // write the header 
+        logFile << "Frame,X,Y,Width,Height\n";
+    }
+    int frameCont = 0; // to match ground truth frame numbers
+
 
     // Video Loop 
     while (capture.read(frame)) {
@@ -115,7 +130,7 @@ int main(int argc, char **argv) {
             scores.push_back(score);
         }
 
-        // non max supression. removes overlapping boxes
+        // non max supression
         vector<int> indices;
         NMSBoxes(
             boxes,
@@ -124,15 +139,21 @@ int main(int argc, char **argv) {
             nms_threshold,
             indices);
 
-        //draw boxes
+        // bounding box loop
         vector<Rect> finalBoxes;
-
         for (int idx : indices) {
             const Rect& box = boxes[idx];
             if (box.width <= 0 || box.height <= 0)
                 continue;
             
             finalBoxes.push_back(box);
+
+            // log each detected bounded box if loggined is enabled
+            if (logFile.is_open()) {
+                // do stuff
+                logFile << frameCont << "," << box.x << "," << box.y << "," << box.width << "," << box.height << "\n";
+            }
+
             rectangle(frame, box, Scalar(0, 255, 0), 2);
         }
 
@@ -146,12 +167,14 @@ int main(int argc, char **argv) {
             outputVideo.write(frame); 
         }
 
+        frameCont++; // increment frame counter for logging
         int key = waitKey(1);
 
         if (key == 27 || key == 'q')
             break;
     }
 
+    cout << "Number of frames that were processed: " << frameCont << endl;
     destroyAllWindows();
     return 0;
 }
