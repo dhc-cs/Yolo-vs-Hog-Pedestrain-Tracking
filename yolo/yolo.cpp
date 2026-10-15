@@ -78,6 +78,9 @@ int main(int argc, char **argv) {
 
     // Video Loop 
     while (capture.read(frame)) {
+
+        int64 t= getTickCount(); // start timer
+
         int side = max(frame.cols, frame.rows);
 
         Mat padded = Mat::zeros(side, side, frame.type());
@@ -140,6 +143,8 @@ int main(int argc, char **argv) {
             nms_threshold,
             indices);
 
+        t = getTickCount() - t; // end timer
+
         // bounding box loop
         vector<Rect> finalBoxes;
         for (int idx : indices) {
@@ -164,6 +169,8 @@ int main(int argc, char **argv) {
         }
 
         tracker.draw(frame); // draw trajectories and IDs
+
+        putText(frame, format("FPS: %.1f", getTickFrequency() / (double)t), Point(10, 30), FONT_HERSHEY_PLAIN, 2.0, Scalar(0, 0, 255), 2, LINE_AA);
 
         imshow("YOLO Pedestrian Detection", frame);
 
