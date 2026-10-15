@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
         logFile.open(filename); 
 
         // write the header 
-        logFile << "Frame,X,Y,Width,Height\n";
+        logFile << "Frame,TrackID,X,Y,Width,Height\n";
     }
     int frameCont = 0; // to match ground truth frame numbers
 
@@ -149,17 +149,20 @@ int main(int argc, char **argv) {
             
             finalBoxes.push_back(box);
 
-            // log each detected bounded box if loggined is enabled
-            if (logFile.is_open()) {
-                // do stuff
-                logFile << frameCont << "," << box.x << "," << box.y << "," << box.width << "," << box.height << "\n";
-            }
+
 
             rectangle(frame, box, Scalar(0, 255, 0), 2);
         }
 
-        //update tracker
-        tracker.update(finalBoxes);
+        //update tracker and get ids
+        vector<int> trackIDs = tracker.update(finalBoxes); 
+        if (logFile.is_open()) {
+            for(size_t i=0; i<finalBoxes.size(); ++i) {
+                const Rect& box = finalBoxes[i];
+                logFile << frameCont << "," << trackIDs[i] << "," << box.x << "," << box.y << "," << box.width << "," << box.height << "\n";
+            }
+        }
+
         tracker.draw(frame); // draw trajectories and IDs
 
         imshow("YOLO Pedestrian Detection", frame);

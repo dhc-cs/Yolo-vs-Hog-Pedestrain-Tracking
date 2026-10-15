@@ -31,9 +31,11 @@ public:
         maxMissedFrames = missed;
     }
 
-    // tracking logic
-    void update(const vector<Rect>& frameBBs) {
+    // tracking logic. return tracking IDs
+    vector<int> update(const vector<Rect>& frameBBs) {
         vector<Point> centers;
+        vector<int> boxIds; //tracks bounding boxes associations to centers
+        vector<int> trackIDs(frameBBs.size(), -1); // holds box IDs
 
         // Calculate centers using the Assignment 3 calculation.
         for (int i = 0; i < frameBBs.size(); ++i) {
@@ -47,6 +49,8 @@ public:
 
             // add calculated COM to centers vector
             centers.push_back(Point(xbar, ybar));
+
+            boxIds.push_back(i); // add box ID to boxIds vector
         }
 
         // flags to keep track of used centers
@@ -80,6 +84,7 @@ public:
                 currentTrackingRecord.consecutiveMisses = 0; // reset consecutiveMisses
                 currentTrackingRecord.centerHistory.push_back(currentTrackingRecord.center); // add new COM to history
                 centersUsed[closest] = true; // mark center as used
+                trackIDs[boxIds[closest]] = currentTrackingRecord.id; // save id
 
                 // Limit the trajectory to the latest 100 observations.
                 if (currentTrackingRecord.centerHistory.size() > 100) {
@@ -97,6 +102,7 @@ public:
 
             TrackingRecord newTrack;
             newTrack.id = nextId++;
+            trackIDs[boxIds[i]] = newTrack.id; // save id
             newTrack.center = centers[i];
             newTrack.consecutiveMisses = 0;
             newTrack.centerHistory.push_back(centers[i]);
@@ -111,6 +117,7 @@ public:
                 ++i;
             }
         }
+        return trackIDs; //return tracking Ids vector 
     }
 
     // visualization logic 
