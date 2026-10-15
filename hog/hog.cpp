@@ -11,6 +11,8 @@
 using namespace cv;
 using namespace std;
 
+#include <fstream>
+
 #include "../comTracker.hpp"
 
 class Detector
@@ -52,7 +54,8 @@ static const string keys = "{ help h   |   | print help message }"
                            "{ video v  |   | use video as input }"
                            "{ bb       |   | draw bounding boxes }"
                            "{ show     |   | show the intermediate results }"
-                           "{ store    |   | save the output video to a file }";
+                           "{ store    |   | save the output video to a file }"
+                           "{log       |   | save detections to csv file }";
 
 int main(int argc, char** argv)
 {
@@ -108,6 +111,19 @@ int main(int argc, char** argv)
     CenterTracker tracker(80.0, 5); // maxDistance = 80.0, maxMissedFrames = 5
     Mat frame;
     unsigned int frameCount = 0; // to keep track of frames 
+
+    // open csv file 
+    string fileName = parser.get<string>("log");
+    ofstream logFile;
+
+    if(!fileName.empty()) { // only log when file name is provided (litle sanity check)
+        // create/open file for writing 
+        logFile.open(fileName); 
+
+        // write the header 
+        logFile << "Frame,X,Y,Width,Height\n";
+    }
+
 
     // create VideoWriter obj to save output video if store flag is set
     VideoWriter outputVideo;
@@ -190,6 +206,11 @@ int main(int argc, char** argv)
             Rect &r = *i;
             detector.adjustRect(r);
 
+            //
+            if (logFile.is_open()) {
+                logFile << (frameCount -1) << "," << r.x << "," << r.y << "," << r.width << "," << r.height << "\n";
+            }
+
             pedCount++; // increment ped count
 
             // log the number of peds detected and the coordainates of each detected ped
@@ -222,5 +243,7 @@ int main(int argc, char** argv)
             detector.toggleMode();
         }
     }
+
+    cout << "The number of frames that were procesed was " << frameCount << endl;
     return 0;
 }
