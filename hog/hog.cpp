@@ -121,7 +121,7 @@ int main(int argc, char** argv)
         logFile.open(fileName); 
 
         // write the header 
-        logFile << "Frame,X,Y,Width,Height\n";
+        logFile << "Frame,TrackID,X,Y,Width,Height\n";
     }
 
 
@@ -206,10 +206,7 @@ int main(int argc, char** argv)
             Rect &r = *i;
             detector.adjustRect(r);
 
-            //
-            if (logFile.is_open()) {
-                logFile << (frameCount -1) << "," << r.x << "," << r.y << "," << r.width << "," << r.height << "\n";
-            }
+
 
             pedCount++; // increment ped count
 
@@ -222,7 +219,16 @@ int main(int argc, char** argv)
         }
 
         // update tracker for current frame
-        tracker.update(found);
+        vector<int> trackIDs = tracker.update(found); // get tracking IDs for current frame
+        if (logFile.is_open()) {
+            for(size_t i=0; i<found.size(); ++i) {
+                if (trackIDs[i] < 0) continue;
+            const Rect& box = found[i];
+            logFile << (frameCount - 1) << "," << trackIDs[i] << "," << box.x << "," << box.y << "," << box.width << "," << box.height << "\n";
+            }
+        }
+        
+
         tracker.draw(frame);
 
         // write to output video if store flag is set
