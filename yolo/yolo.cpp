@@ -75,6 +75,7 @@ int main(int argc, char **argv) {
     }
     int frameCont = 0; // to match ground truth frame numbers
 
+    double inferTime = 0.0; // to keep track of inference time
 
     // Video Loop 
     while (capture.read(frame)) {
@@ -98,7 +99,11 @@ int main(int argc, char **argv) {
         net.setInput(blob); // load frame from yolo
 
         vector<Mat> outputs; // to hold output from yolo
-        net.forward(outputs, net.getUnconnectedOutLayersNames()); // get output from yolo
+        
+        int64 inferStart = getTickCount(); // start inference timer
+        net.forward(outputs, net.getUnconnectedOutLayersNames()); // run inference
+        inferTime += (getTickCount() - inferStart) / getTickFrequency(); // end inference timer
+
 
         // reshape output. one row per prediction 
         Mat predictions = outputs[0].reshape(1, outputs[0].size[1]);
@@ -186,6 +191,11 @@ int main(int argc, char **argv) {
     }
 
     cout << "Number of frames that were processed: " << frameCont << endl;
+
+    if (frameCont > 0) {
+        cout << "avg inference time: " << 1000.0 * inferTime / frameCont << " ms/frame" << endl;
+    }
+
     destroyAllWindows();
     return 0;
 }
