@@ -2,8 +2,8 @@
 set -e
 
 echo "========== HOG =========="
-python evaluate.py hog/hogOutput.csv data/V016_8s_labels.csv
-python evalTracking.py hog/hogOutput.csv data/V016_8s_labels.csv 242
+python evaluate.py hog/output.csv data/V016_8s_labels.csv
+python evalTracking.py hog/output.csv data/V016_8s_labels.csv 242
 
 echo
 echo "========== YOLO =========="
