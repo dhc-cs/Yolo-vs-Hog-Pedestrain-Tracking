@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
     }
 
     // load model
-    Net net = readNetFromONNX("config/yolov5s.onnx");
+    Net net = readNetFromONNX("config/yolov5n.onnx");
 
     net.setPreferableBackend(DNN_BACKEND_OPENCV);
     net.setPreferableTarget(DNN_TARGET_CPU);
