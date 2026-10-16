@@ -56,7 +56,7 @@ int main(int argc, char **argv) {
     net.setPreferableTarget(DNN_TARGET_CPU);
 
     const int input_size = 640;
-    const float confidence_threshold = 0.25f;
+    const float confidence_threshold = 0.20f;
     const float nms_threshold = 0.40f;
 
     Mat frame;
