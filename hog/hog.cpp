@@ -146,6 +146,8 @@ int main(int argc, char** argv)
         }
     }
 
+
+    int64 startTime = getTickCount(); //start timer for fps 
     for (;;)
     {
         cap >> frame;
@@ -250,6 +252,8 @@ int main(int argc, char** argv)
         }
     }
 
-    cout << "The number of frames that were procesed was " << frameCount << endl;
+    double totalTime = (getTickCount() - startTime) / getTickFrequency(); // end timer for fps
+    cout << "avg fps: " << frameCount / totalTime << endl; // print avg fps
+
     return 0;
 }
