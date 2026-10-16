@@ -57,7 +57,7 @@ int main(int argc, char **argv) {
 
     const int input_size = 640;
     const float confidence_threshold = 0.30f;
-    const float nms_threshold = 0.40f;
+    const float nms_threshold = 0.30f;
 
     Mat frame;
     CenterTracker tracker(80.0, 5); // maxDistance = 80.0, maxMissedFrames = 5
