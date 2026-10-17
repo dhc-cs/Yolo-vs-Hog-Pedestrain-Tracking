@@ -1,2 +1,5 @@
 .DS_Store
 .venv/
+hog/hog
+hog/hog.o
+
