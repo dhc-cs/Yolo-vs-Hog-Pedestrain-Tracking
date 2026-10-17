@@ -158,7 +158,23 @@ int main(int argc, char** argv)
             break;
         }
         int64 t = getTickCount();
-        vector<Rect> found = detector.detect(frame);
+        
+        // make a bigger copy of the frame
+        dougle scaleUp = 1.5;
+        Mat bigFrame;
+        resize(frame, bigFrame, Size(), scaleUp, scaleUp);
+
+        // use scaled up frame for detection
+        vector<Rect> found = detector.detect(bigFrame);
+
+        //convert back to orignial 
+        for (Rect& r : found) {
+            r.x = cvRound(r.x / scaleUp);
+            r.y = cvRound(r.y / scaleUp);
+            r.width = cvRound(r.width / scaleUp);
+            r.height = cvRound(r.height / scaleUp);
+        }
+
         t = getTickCount() - t;
 
         frameCount++; // increment frame count
