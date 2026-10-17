@@ -34,7 +34,7 @@ public:
         // groupThreshold (set groupThreshold to 0 to turn off the grouping completely).
         vector<Rect> found;
         if (m == Default)
-            hog.detectMultiScale(img, found, 0, Size(8,8), Size(24,24), 1.05, 2, false);
+            hog.detectMultiScale(img, found, 0, Size(8,8), Size(24,24), 1.06, 2, false);
         else if (m == Daimler)
             hog_d.detectMultiScale(img, found, 0, Size(8,8), Size(), 1.05, 2, true);
         return found;
@@ -107,6 +107,7 @@ int main(int argc, char** argv)
         resizeWindow("Sobel Edge Detection", 640, 480);
     }
 
+    cv::setNumThreads(8);
     Detector detector;
     CenterTracker tracker(80.0, 5); // maxDistance = 80.0, maxMissedFrames = 5
     Mat frame;
@@ -163,7 +164,7 @@ int main(int argc, char** argv)
         frameCount++; // increment frame count
         // log frame count and detections 
         // adapted from hw 2 edge_viewer.cpp
-        syslog(LOG_INFO, "frameCount = %u detections = %zu", frameCount, found.size());
+        //syslog(LOG_INFO, "frameCount = %u detections = %zu", frameCount, found.size());
 
 
         // adapted from sobel.cpp from assignemnt 2
@@ -213,7 +214,7 @@ int main(int argc, char** argv)
             pedCount++; // increment ped count
 
             // log the number of peds detected and the coordainates of each detected ped
-            syslog(LOG_INFO, "frameCount = %u pedCount = %u x = %d y = %d width = %d height = %d", frameCount, pedCount, r.x, r.y, r.width, r.height);
+            //syslog(LOG_INFO, "frameCount = %u pedCount = %u x = %d y = %d width = %d height = %d", frameCount, pedCount, r.x, r.y, r.width, r.height);
 
 
             // draw bb if flag is set
