@@ -34,7 +34,19 @@ public:
         // groupThreshold (set groupThreshold to 0 to turn off the grouping completely).
         vector<Rect> found;
         if (m == Default)
-            hog.detectMultiScale(img, found, 0.22, Size(8,8), Size(24,24), 1.06, 2, false);
+            //hog.detectMultiScale(img, found, 0.20, Size(8,8), Size(24,24), 1.06, 2, false);
+            
+            vector<double> scores;
+            hog.detectMultiScale(img, found, scores, 0.20, Size(8,8), Size(24,24), 1.06, 2, false);
+            vector<Rect> kept;
+            
+            // only keep boxes within threshold
+            for (size_t i = 0; i < found.size(); i++) {
+            	if ( scores[i] >= .3
+            		kept.push_back(found[i]);
+            }
+            found = kept;
+            
         else if (m == Daimler)
             hog_d.detectMultiScale(img, found, 0, Size(8,8), Size(), 1.05, 2, true);
         return found;
