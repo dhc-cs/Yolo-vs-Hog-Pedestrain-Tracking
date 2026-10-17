@@ -42,7 +42,7 @@ public:
             
             // only keep boxes within threshold
             for (size_t i = 0; i < found.size(); i++) {
-            	if ( scores[i] >= .3)
+            	if ( scores[i] >= .50)
             		kept.push_back(found[i]);
             }
             found = kept;
