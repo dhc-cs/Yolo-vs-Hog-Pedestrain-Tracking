@@ -160,7 +160,7 @@ int main(int argc, char** argv)
         int64 t = getTickCount();
         
         // make a bigger copy of the frame
-        dougle scaleUp = 1.5;
+        double scaleUp = 1.5;
         Mat bigFrame;
         resize(frame, bigFrame, Size(), scaleUp, scaleUp);
 
