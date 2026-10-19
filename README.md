@@ -2,68 +2,94 @@
 
 ## Overview
 
-For this project, I am comparing traditional computer vision techniques with deep learning for pedestrian detection. I am using OpenCV’s HOG/SVM detector and a pretrained YOLOv5s model on the same Jetson Orin Nano.
+I compare OpenCV’s HOG/SVM detector with pretrained YOLOv5n on a Jetson Orin Nano using the same video. Both programs detect pedestrians, assign tracking IDs, draw trajectories, and optionally save annotated videos and prediction CSVs. I did not train either model.
 
-My goal is to compare detection accuracy and processing performance using the same input video. Additionally, I plan to track pedestrians by assigning IDs and drawing trajectories using the center of each bounding box.
 
 ## Requirements
 
-The project has been tested on a Jetson Orin Nano using:
-
 - OpenCV 4.5.4
-- C++
-- g++
-- make
-- pkg-config
+- g++, make, and pkg-config
+- Python 3 with NumPy, pandas, and motmetrics for evaluation
+
+## Input Data
+
+The evaluation uses these files:
+
+```text
+data/V016_8s.mp4
+data/V016_8s_labels.csv
+```
+
+The video contains 242 frames from the [Caltech Pedestrians dataset](https://data.caltech.edu/records/f6rph-90m20).
+
+I used MATLAB Online and Piotr Dollár’s toolbox to export the frames and labels, then FFmpeg to create the MP4. The export script is `data/export_V016.m`.
 
 ## Build and Run
 
-Run the following commands from the repository root.
+Start from the repository root.
 
 ### HOG
 
 ```bash
 cd hog
-make clean
 make
-./hog --video=/path/to/input.mp4 --bb --store=hog_output.mp4
+./hog --video=../data/V016_8s.mp4 --bb --log=output.csv --store=output.mp4
 ```
-
-The `--bb` option displays bounding boxes. The `--store` option saves the processed video.
-
-HOG also supports `--show` to display a separate Sobel gradient visualization.
 
 ### YOLO
 
 ```bash
 cd yolo
-make clean
 make
-./yolo --video=/path/to/input.mp4 --store=yolo_output.mp4
+./yolo --video=../data/V016_8s.mp4 --log=output.csv --store=output.mp4
 ```
 
-Run YOLO from the `yolo` directory so it can find `config/yolov5s.onnx`.
+Run YOLO from its directory so it can find `config/yolov5n.onnx`.
 
-Exit each program using `CTRL + C` . Saving the output video is optional.
+- `--video`: input video
+- `--log`: save predictions to CSV
+- `--store`: save annotated video
+- HOG `--bb`: draw bounding boxes
+- HOG `--show`: display Sobel edges
 
-## Models and Input Videos
 
-HOG uses OpenCV’s pretrained SVM pedestrian detector. YOLO uses the pretrained YOLOv5s ONNX model. I did not train either model.
+Press **q** or **Escape** to exit. HOG also uses **Space** to switch Default/Daimler detectors. Let the full clip finish before evaluating.
 
-The YOLO model must be located at `yolo/config/yolov5s.onnx`.
+## Evaluation
 
-Input videos must be specified separately.
+
+From the repository root, create the environment once:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install numpy pandas motmetrics
+```
+
+For later runs:
+
+```bash
+source .venv/bin/activate
+bash evalAll.sh
+```
+
+The script evaluates `hog/output.csv` and `yolo/output.csv` against `data/V016_8s_labels.csv`.
+
+- `evaluate.py`: precision, recall, and F1
+- `evalTracking.py`: IDF1 and ID switches
+
+Both evaluators use an IoU threshold of 0.50. The current evaluation is configured for 242 frames.
+
+
+Each row is one detected box. Frames without detections have no rows.
+
 
 ## Sources and Acknowledgments
 
-HOG was adapted from [OpenCV’s pedestrian detection sample](https://github.com/opencv/opencv/blob/4.5.4/samples/cpp/peopledetect.cpp)
-
-YOLO was adapted from the [doleron YOLOv5 OpenCV example](https://github.com/doleron/yolov5-opencv-cpp-python)
-
-Video saving was based on [OpenCV’s video-writing tutorial](https://docs.opencv.org/4.5.4/d7/d9e/tutorial_video_write.html)
-
-The Makefiles were adapted from [Professor Sam Siewert’s starter code](https://github.com/sbsiewertcsu/cv4_computer_vision_starter_code/blob/main/simpler-capture-4/Makefile)
-
-The input video `2012-08-25-RoseBowl.mp4` was shortened to a 10 second clip named `smallRose.mp4`.
-
-The dataset reference is [Pedestrian Detection: A Benchmark](https://ieeexplore.ieee.org/document/5206631) by Piotr Dollár, Christian Wojek, Bernt Schiele, and Pietro Perona.
+- HOG: [OpenCV pedestrian detection sample](https://github.com/opencv/opencv/blob/4.5.4/samples/cpp/peopledetect.cpp)
+- YOLO: [doleron YOLOv5 example](https://github.com/doleron/yolov5-opencv-cpp-python)
+- Video saving: [OpenCV video-writing tutorial](https://docs.opencv.org/4.5.4/d7/d9e/tutorial_video_write.html)
+- Makefiles: [Professor Sam Siewert’s starter code](https://github.com/sbsiewertcsu/cv4_computer_vision_starter_code/blob/main/simpler-capture-4/Makefile)
+- Data preparation: [Piotr Dollár’s MATLAB Toolbox](https://github.com/pdollar/toolbox) and FFmpeg
+- Tracking evaluation: [motmetrics](https://github.com/cheind/py-motmetrics)
+- Dataset reference: [Pedestrian Detection: A Benchmark](https://ieeexplore.ieee.org/document/5206631)
